@@ -1,10 +1,16 @@
 // create_mcp_server.js
 
-const fs = require('fs').promises;
+const fs = require('fs'); // Use sync fs for createReadStream if needed
+const fsPromises = require('fs').promises; // Keep async promises version
 const path = require('path');
 const { exec } = require('child_process');
-const readline = require('readline').createInterface({
-  input: process.stdin,
+const readline = require('readline');
+
+// Determine the input stream based on whether stdin is a TTY
+const inputStream = process.stdin.isTTY ? process.stdin : fs.createReadStream('/dev/tty');
+
+const rl = readline.createInterface({
+  input: inputStream, // Use the determined input stream
   output: process.stdout,
 });
 
@@ -12,7 +18,7 @@ const mcpServersDir = process.cwd();
 
 function askQuestion(query) {
   return new Promise((resolve) => {
-    readline.question(query, (answer) => {
+    rl.question(query, (answer) => { // Use rl instead of readline directly
       resolve(answer);
     });
   });
@@ -116,7 +122,7 @@ async function createMcpServer() {
   const serverDir = path.join(baseDirectory, serverName);
   const srcDir = path.join(serverDir, 'src');
   try {
-    await fs.mkdir(srcDir, { recursive: true });
+    await fsPromises.mkdir(srcDir, { recursive: true });
   } catch (error) {
     console.error('Error creating directories:', error);
     return;
@@ -126,7 +132,7 @@ async function createMcpServer() {
   const sanitizedServerName = serverName.replace(/[^a-zA-Z0-9-_]/g, '');
   const serverSkeleton = generateServerSkeleton(sanitizedServerName);
   try {
-    await fs.writeFile(indexPath, serverSkeleton, 'utf-8');
+    await fsPromises.writeFile(indexPath, serverSkeleton, 'utf-8');
     console.log('src/index.ts file created.');
   } catch (error) {
     console.error('Error creating src/index.ts file:', error);
@@ -172,7 +178,7 @@ async function createMcpServer() {
   };
 
   try {
-    await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf-8');
+    await fsPromises.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf-8');
     console.log('package.json file created.');
 
     console.log('Installing dependencies...');
@@ -211,7 +217,7 @@ async function createMcpServer() {
   };
 
   try {
-    await fs.writeFile(tsconfigPath, JSON.stringify(tsconfig, null, 2), 'utf-8');
+    await fsPromises.writeFile(tsconfigPath, JSON.stringify(tsconfig, null, 2), 'utf-8');
     console.log('tsconfig.json file created.');
   } catch (error) {
     console.error('Error creating tsconfig.json:', error);
@@ -223,7 +229,7 @@ async function createMcpServer() {
   console.log(`cd ${serverDir}`);
   console.log(`npm run build`);
   console.log(`npm start`);
-  readline.close();
+  rl.close();
 }
 
 createMcpServer();
