@@ -19,8 +19,7 @@ function askQuestion(query) {
 }
 
 function generateServerSkeleton(serverName) {
-  return `
-// 필요한 모듈 import
+  return `#!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -91,15 +90,20 @@ class ${serverName} {
 
 const server = new ${serverName}();
 server.run().catch(console.error);
-  `;
+`;
 }
 
 async function createMcpServer() {
+  // 커맨드 라인 인자에서 디렉토리 경로 가져오기 (node create_mcp_server.js <directory>)
+  const targetDirectoryArg = process.argv[2];
+  // 인자가 없으면 스크립트 파일이 있는 디렉토리 사용, 있으면 해당 경로 사용
+  const baseDirectory = targetDirectoryArg ? path.resolve(targetDirectoryArg) : path.dirname(process.argv[1]);
+
   const serverName = await askQuestion('MCP 서버 이름: ');
   const command = await askQuestion('실행 명령어 (예: node): ');
-  const argsString = await askQuestion('인수 (쉼표로 구분): ');
+  const argsString = await askQuestion('인수 (쉼표로 구분, 예: --version, -y): ');
   const args = argsString.split(',').map(arg => arg.trim());
-  const envString = await askQuestion('환경 변수 (key=value, 쉼표로 구분): ');
+  const envString = await askQuestion('환경 변수 (key=value, 쉼표로 구분, 예: API_KEY=nEBjsd,DATA=asnd): ');
   const envPairs = envString.split(',').map(pair => pair.trim());
   const env = {};
   envPairs.forEach(pair => {
@@ -109,40 +113,61 @@ async function createMcpServer() {
     }
   });
 
-  const serverDir = path.join(mcpServersDir, serverName);
+  const serverDir = path.join(baseDirectory, serverName);
+  const srcDir = path.join(serverDir, 'src');
   try {
-    await fs.mkdir(serverDir, { recursive: true });
+    await fs.mkdir(srcDir, { recursive: true });
   } catch (error) {
-    console.error('Error creating server directory:', error);
+    console.error('Error creating directories:', error);
     return;
   }
 
-  const indexPath = path.join(serverDir, 'index.ts');
-  const serverSkeleton = generateServerSkeleton(serverName.replace(/[^a-zA-Z0-9]/g, ''));
+  const indexPath = path.join(srcDir, 'index.ts');
+  const sanitizedServerName = serverName.replace(/[^a-zA-Z0-9-_]/g, '');
+  const serverSkeleton = generateServerSkeleton(sanitizedServerName);
   try {
     await fs.writeFile(indexPath, serverSkeleton, 'utf-8');
-    console.log('index.ts file created.');
+    console.log('src/index.ts file created.');
   } catch (error) {
-    console.error('Error creating index.ts file:', error);
+    console.error('Error creating src/index.ts file:', error);
     return;
   }
 
   const packageJsonPath = path.join(serverDir, 'package.json');
   const packageJson = {
-    name: serverName,
-    version: '1.0.0',
-    description: 'MCP server',
-    main: 'build/index.js',
-    type: 'module',
-    scripts: {
-      build: 'tsc',
-      start: 'node build/index.js'
+    "name": sanitizedServerName.toLowerCase(),
+    "version": "1.0.0",
+    "description": "MCP server",
+    "license": "MIT",
+    "author": "",
+    "type": "module",
+    "private": false,
+      [serverName.replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase()]: "build/index.js",
+      [serverName]: "build/index.js",
+    "files": [
+      "build"
+    ],
+    "publishConfig": {
+      "access": "public"
     },
-    dependencies: {
-      "@modelcontextprotocol/sdk": "latest"
+    "engines": {
+      "node": ">=14"
     },
-    devDependencies: {
-      "typescript": "^5.0.0"
+    "scripts": {
+      "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+      "watch": "tsc --watch",
+      "inspector": "npx @modelcontextprotocol/inspector build/index.js",
+      "start": "node build/index.js"
+    },
+    "dependencies": {
+      "@modelcontextprotocol/sdk": "latest",
+      "axios": "^1.7.9",
+      "mcp-framework": "^0.1.12",
+      "okhttp": "^1.1.0"
+    },
+    "devDependencies": {
+      "@types/node": "^20.11.24",
+      "typescript": "^5.7.2"
     }
   };
 
@@ -165,6 +190,31 @@ async function createMcpServer() {
     console.log('Dependencies installed.');
   } catch (error) {
     console.error('Error creating package.json or installing dependencies:', error);
+    return;
+  }
+
+  const tsconfigPath = path.join(serverDir, 'tsconfig.json');
+  const tsconfig = {
+    "compilerOptions": {
+      "target": "ES2022",
+      "module": "Node16",
+      "moduleResolution": "Node16",
+      "outDir": "./build",
+      "rootDir": "./src",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+  };
+
+  try {
+    await fs.writeFile(tsconfigPath, JSON.stringify(tsconfig, null, 2), 'utf-8');
+    console.log('tsconfig.json file created.');
+  } catch (error) {
+    console.error('Error creating tsconfig.json:', error);
     return;
   }
 
