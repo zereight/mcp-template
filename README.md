@@ -42,23 +42,6 @@ curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_m
 *   `[target_directory_path]` is optional. If omitted in either method, the server project will be created in the directory where the script is located/downloaded.
 *   When the script runs, it will prompt you to enter the server name, execution command, arguments, and environment variables.
 
-### 2. Run Directly with Pipe (`|`)
-
-Downloads and executes the script immediately without saving it locally.
-
-```bash
-# Run specifying target directory
-curl -sSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js | node - -- [target_directory_path]
-
-# Run for current directory
-curl -sSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js | node - -- .
-# Or simply omit the path for current directory
-curl -sSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js | node - --
-```
-
-*   `[target_directory_path]` is optional. Specify it after `--`. If omitted (or specified as `.`), the project is created in the current directory.
-*   **Note:** This method works because the script has been modified to read input directly from the terminal (`/dev/tty`) when piped.
-
 ### After Execution
 
 Once the script finishes, an MCP server project folder will be created at the specified path. Navigate into the folder and run the following commands:
