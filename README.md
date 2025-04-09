@@ -18,24 +18,30 @@ This method downloads the script first and then executes it locally. You can do 
 
 **Option A: Two Steps**
 
+Step 1: Download the script (saves to the current directory)
 ```bash
-# Step 1: Download the script (saves to the current directory)
 curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js -o create_mcp_server.js
+```
 
-# Step 2: Execute the script (specify target directory)
+Step 2: Execute the script (specify target directory)
+```bash
 node ./create_mcp_server.js [target_directory_path]
+```
 
-# Step 2: Or execute without path (creates project in current directory)
+Or execute without path (creates project in current directory)
+```bash
 node ./create_mcp_server.js
 ```
 
 **Option B: Combined Command (`&&`)**
 
+Download and execute immediately (specify target directory)
 ```bash
-# Download and execute immediately (specify target directory)
 curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js -o create_mcp_server.js && node ./create_mcp_server.js [target_directory_path]
+```
 
-# Download and execute immediately (creates project in current directory)
+Download and execute immediately (creates project in current directory)
+```bash
 curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js -o create_mcp_server.js && node ./create_mcp_server.js
 ```
 
@@ -46,9 +52,18 @@ curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_m
 
 Once the script finishes, an MCP server project folder will be created at the specified path. Navigate into the folder and run the following commands:
 
+Navigate to project folder
 ```bash
 cd <generated_server_project_folder>
+```
+
+Build the project
+```bash
 npm run build
+```
+
+Start the server
+```bash
 npm start
 ```
 
