@@ -97,7 +97,7 @@ class ${className} {
             },
             required: ['name']
           }
-        }
+        }차
       ]
     }));
 
@@ -195,7 +195,7 @@ async function createMcpServer() {
       "start": "node build/index.js"
     },
     "dependencies": {
-      "@modelcontextprotocol/sdk": "latest",
+      "@modelcontextprotocol/sdk": "1.8.0",
       "axios": "^1.7.9",
       "mcp-framework": "^0.1.12",
       "okhttp": "^1.1.0"
