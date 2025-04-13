@@ -9,61 +9,31 @@ This repository contains a simple Node.js script (`create_mcp_server.js`) to gen
 *   Generates a basic `package.json` including the necessary `@modelcontextprotocol/sdk` dependency.
 *   Creates a skeleton server code (`src/index.ts`) with a simple 'hello' tool example.
 *   Automatically installs project dependencies (`npm install`).
+*   Generates a `.gitignore` file.
 
-## How to Use (Using `curl`)
+## How to Use
 
-### 1. Download the Script and Run
+Run the following command in your terminal. This will download the script and execute it immediately:
 
-This method downloads the script first and then executes it locally. You can do this in two steps or combine them with `&&`.
-
-**Option A: Two Steps**
-
-Step 1: Download the script (saves to the current directory)
-```bash
-curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js -o create_mcp_server.js
-```
-
-Step 2: Execute the script (specify target directory)
-```bash
-node ./create_mcp_server.js [target_directory_path]
-```
-
-Or execute without path (creates project in current directory)
-```bash
-node ./create_mcp_server.js
-```
-
-**Option B: Combined Command (`&&`)**
-
-Download and execute immediately (specify target directory)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js -o create_mcp_server.js && node ./create_mcp_server.js [target_directory_path]
 ```
 
-Download and execute immediately (creates project in current directory)
-```bash
-curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js -o create_mcp_server.js && node ./create_mcp_server.js
-```
+*   `[target_directory_path]` is optional. If provided, the MCP server project will be created in that directory. If omitted, it will be created in the current directory.
+*   The script will prompt you for the server name and other configuration details.
 
-*   `[target_directory_path]` is optional. If omitted in either method, the server project will be created in the directory where the script is located/downloaded.
-*   When the script runs, it will prompt you to enter the server name, execution command, arguments, and environment variables.
+## After Execution
 
-### After Execution
+Once the script finishes, navigate into the newly created project folder:
 
-Once the script finishes, an MCP server project folder will be created at the specified path. Navigate into the folder and run the following commands:
-
-Navigate to project folder
 ```bash
 cd <generated_server_project_folder>
 ```
 
-Build the project
+Then, build and start your MCP server:
+
 ```bash
 npm run build
-```
-
-Start the server
-```bash
 npm start
 ```
 
