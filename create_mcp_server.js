@@ -6,6 +6,9 @@ const path = require('path');
 const { exec } = require('child_process');
 const readline = require('readline');
 
+// Import the utility function
+const { toPascalCase } = require('./toPascalCase.test.js'); // Assuming the test file exports it
+
 // Determine the input stream based on whether stdin is a TTY
 const inputStream = process.stdin.isTTY ? process.stdin : fs.createReadStream('/dev/tty');
 
@@ -25,6 +28,9 @@ function askQuestion(query) {
 }
 
 function generateServerSkeleton(serverName) {
+  // Convert serverName to PascalCase for the class name using the utility function
+  const className = toPascalCase(serverName);
+
   return `#!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -35,7 +41,7 @@ import {
   ErrorCode
 } from '@modelcontextprotocol/sdk/types.js';
 
-class ${serverName} {
+class ${className} {
   private server: Server;
 
   constructor() {
@@ -94,7 +100,7 @@ class ${serverName} {
   }
 }
 
-const server = new ${serverName}();
+const server = new ${className}();
 server.run().catch(console.error);
 `;
 }
@@ -129,8 +135,14 @@ async function createMcpServer() {
   }
 
   const indexPath = path.join(srcDir, 'index.ts');
-  const sanitizedServerName = serverName.replace(/[^a-zA-Z0-9-_]/g, '');
-  const serverSkeleton = generateServerSkeleton(sanitizedServerName);
+  // Use the original serverName (not sanitized yet) for generating the skeleton
+  const serverSkeleton = generateServerSkeleton(serverName);
+
+  // Sanitize serverName for directory and package.json naming (allow hyphens/underscores)
+  const sanitizedServerNameForPaths = serverName.replace(/[^a-zA-Z0-9-_]/g, '');
+  // Sanitize serverName for package.json name field (lowercase, no special chars except hyphen maybe)
+  const sanitizedServerNameForPackage = serverName.toLowerCase().replace(/[^a-z0-9-]/g, '');
+
   try {
     await fsPromises.writeFile(indexPath, serverSkeleton, 'utf-8');
     console.log('src/index.ts file created.');
@@ -141,15 +153,15 @@ async function createMcpServer() {
 
   const packageJsonPath = path.join(serverDir, 'package.json');
   const packageJson = {
-    "name": sanitizedServerName.toLowerCase(),
+    "name": sanitizedServerNameForPackage,
     "version": "1.0.0",
     "description": "MCP server",
     "license": "MIT",
     "author": "",
     "type": "module",
     "private": false,
-      [serverName.replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase()]: "build/index.js",
-      [serverName]: "build/index.js",
+      // Use sanitized name for bin entry too
+      [sanitizedServerNameForPaths.toLowerCase()]: "build/index.js",
     "files": [
       "build"
     ],
