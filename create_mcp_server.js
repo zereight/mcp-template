@@ -239,6 +239,49 @@ async function createMcpServer() {
     return;
   }
 
+  // Create .gitignore file
+  const gitignorePath = path.join(serverDir, '.gitignore');
+  const gitignoreContent = `# Dependency directories
+node_modules/
+
+# Build output
+build/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# dotenv environment variables file
+.env*
+!.env.example
+`;
+  try {
+    await fsPromises.writeFile(gitignorePath, gitignoreContent, 'utf-8');
+    console.log('.gitignore file created.');
+  } catch (error) {
+    console.error('Error creating .gitignore file:', error);
+    // No return here, as it's not critical like tsconfig or package.json
+  }
+
   console.log(`\n서버 프로젝트가 ${serverDir}에 생성되었습니다.`);
   console.log(`\n이 디렉토리로 이동 후 다음 명령어를 실행하세요:`);
   console.log(`cd ${serverDir}`);
