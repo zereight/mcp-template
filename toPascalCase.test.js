@@ -1,4 +1,7 @@
 // toPascalCase.test.js
+import { fileURLToPath } from 'url';
+import path from 'path';
+import process from 'process';
 
 // Utility function to convert a string to PascalCase
 function toPascalCase(str) {
@@ -63,10 +66,13 @@ function runTests() {
 }
 
 // Export the utility function for use in other modules
-module.exports = { toPascalCase };
+export { toPascalCase };
 
 // Run tests only if the script is executed directly
-if (require.main === module) {
+const currentFilePath = fileURLToPath(import.meta.url);
+const scriptPath = path.resolve(process.argv[1]);
+
+if (currentFilePath === scriptPath) {
   const allPassed = runTests();
   process.exit(allPassed ? 0 : 1); // Exit with 0 if all tests pass, 1 otherwise
 } 

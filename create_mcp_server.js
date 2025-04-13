@@ -1,13 +1,16 @@
 // create_mcp_server.js
 
-const fs = require('fs'); // Use sync fs for createReadStream if needed
-const fsPromises = require('fs').promises; // Keep async promises version
-const path = require('path');
-const { exec } = require('child_process');
-const readline = require('readline');
+// Use import instead of require for ES modules
+import fs from 'fs'; // Use sync fs for createReadStream if needed
+import fsPromises from 'fs/promises'; // Keep async promises version
+import path from 'path';
+import { exec } from 'child_process';
+import readline from 'readline';
+import process from 'process';
 
-// Import the utility function
-const { toPascalCase } = require('./toPascalCase.test.js'); // Assuming the test file exports it
+// Import the utility function using ES module syntax
+// Note: Need to specify the file extension .js
+import { toPascalCase } from './toPascalCase.test.js';
 
 // Determine the input stream based on whether stdin is a TTY
 const inputStream = process.stdin.isTTY ? process.stdin : fs.createReadStream('/dev/tty');
