@@ -3,24 +3,27 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import process from 'process';
 
-// Utility function to convert a string to PascalCase
-function toPascalCase(str) {
-  if (!str) return ''; // Handle empty or null input
+// Import the function to test from create_mcp_server.js
+import { toPascalCase } from './create_mcp_server.js';
 
-  // Check if the string contains separators
-  if (!str.includes('-') && !str.includes('_')) {
-    // No separators: capitalize first letter, keep the rest as is
-    // This handles cases like 'simple' and 'alreadyPascal'
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  } else {
-    // Separators found: split, capitalize first letter, lowercase rest, join
-    return str
-      .split(/[-_]/) // Split by hyphen or underscore
-      .filter(part => part.length > 0) // Remove empty strings resulting from leading/trailing/double separators
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()) // Capitalize first letter, lowercase rest
-      .join(''); // Join parts back together
-  }
-}
+// Utility function to convert a string to PascalCase
+// function toPascalCase(str) {
+//   if (!str) return ''; // Handle empty or null input
+//
+//   // Check if the string contains separators
+//   if (!str.includes('-') && !str.includes('_')) {
+//     // No separators: capitalize first letter, keep the rest as is
+//     // This handles cases like 'simple' and 'alreadyPascal'
+//     return str.charAt(0).toUpperCase() + str.slice(1);
+//   } else {
+//     // Separators found: split, capitalize first letter, lowercase rest, join
+//     return str
+//       .split(/[-_]/) // Split by hyphen or underscore
+//       .filter(part => part.length > 0) // Remove empty strings resulting from leading/trailing/double separators
+//       .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()) // Capitalize first letter, lowercase rest
+//       .join(''); // Join parts back together
+//   }
+// }
 
 // --- Test Section for toPascalCase --- START
 function runTests() {
@@ -64,9 +67,6 @@ function runTests() {
     return false;
   }
 }
-
-// Export the utility function for use in other modules
-export { toPascalCase };
 
 // Run tests only if the script is executed directly
 const currentFilePath = fileURLToPath(import.meta.url);

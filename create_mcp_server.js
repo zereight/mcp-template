@@ -8,10 +8,6 @@ import { exec } from 'child_process';
 import readline from 'readline';
 import process from 'process';
 
-// Import the utility function using ES module syntax
-// Note: Need to specify the file extension .js
-import { toPascalCase } from './toPascalCase.test.js';
-
 // Determine the input stream based on whether stdin is a TTY
 const inputStream = process.stdin.isTTY ? process.stdin : fs.createReadStream('/dev/tty');
 
@@ -28,6 +24,24 @@ function askQuestion(query) {
       resolve(answer);
     });
   });
+}
+
+// Utility function to convert a string to PascalCase (defined inline)
+export function toPascalCase(str) {
+  if (!str) return ''; // Handle empty or null input
+
+  // Check if the string contains separators
+  if (!str.includes('-') && !str.includes('_')) {
+    // No separators: capitalize first letter, keep the rest as is
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  } else {
+    // Separators found: split, capitalize first letter, lowercase rest, join
+    return str
+      .split(/[-_]/) // Split by hyphen or underscore
+      .filter(part => part.length > 0) // Remove empty strings resulting from leading/trailing/double separators
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()) // Capitalize first letter, lowercase rest
+      .join(''); // Join parts back together
+  }
 }
 
 function generateServerSkeleton(serverName) {
