@@ -16,7 +16,7 @@ This repository contains a simple Node.js script (`create_mcp_server.js`) to gen
 Run the following command in your terminal. This will download the script and execute it immediately:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js -o create_mcp_server.js && node ./create_mcp_server.js [target_directory_path]
+curl -fsSL https://raw.githubusercontent.com/zereight/mcp-template/main/create_mcp_server.js -o create_mcp_server.js && node ./create_mcp_server.js
 ```
 
 *   `[target_directory_path]` is optional. If provided, the MCP server project will be created in that directory. If omitted, it will be created in the current directory.
