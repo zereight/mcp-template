@@ -97,7 +97,7 @@ class ${className} {
             },
             required: ['name']
           }
-        }차
+        }
       ]
     }));
 
