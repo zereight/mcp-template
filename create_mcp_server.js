@@ -196,13 +196,14 @@ async function createMcpServer() {
     },
     "dependencies": {
       "@modelcontextprotocol/sdk": "1.8.0",
-      "axios": "^1.7.9",
-      "mcp-framework": "^0.1.12",
-      "okhttp": "^1.1.0"
+      "@types/node-fetch": "^2.6.12",
+      "node-fetch": "^3.3.2",
+      "zod-to-json-schema": "^3.23.5"
     },
     "devDependencies": {
-      "@types/node": "^20.11.24",
-      "typescript": "^5.7.2"
+      "@types/node": "^22.13.10",
+      "typescript": "^5.8.2",
+      "zod": "^3.24.2"
     }
   };
 
